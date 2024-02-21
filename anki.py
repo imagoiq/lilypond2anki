@@ -1,53 +1,71 @@
 import genanki, os, sys
 from natsort import natsorted
 
-print('creating anki package file...')
+deckName = sys.argv[1]
+inputFolderName = sys.argv[2]
+tmpFolderName = sys.argv[3]
+outputFolderName = sys.argv[4]
+
+print('\ncreating anki package file...')
 
 my_model = genanki.Model(
   1091735104,
   'Sheet Music',
   fields=[
     {'name': 'Score'},
-    {'name': 'EasyScore'},
+    {'name': 'Info' },
     {'name': 'Music'},
   ],
   templates=[
     {
       'name': 'Card 1',
-      'qfmt': '{{Score}}',
-      'afmt': '{{FrontSide}}<hr id="answer">{{EasyScore}}<br>{{Music}}',
+      'qfmt': '{{Music}}',
+      'afmt': '{{FrontSide}}<hr id="answer"><br>{{Score}}<br>{{Info}}',
     },
   ])
 
 my_deck = genanki.Deck(
   2059400110,
-  'Sight reading')
+  deckName)
 my_package = genanki.Package(my_deck)
 
 my_package.media_files = []
-folderName = sys.argv[1]
-fileNames = natsorted(filter(lambda s: '.png' in s, os.listdir(folderName)))
-fileNames.insert(0, fileNames.pop())
-fileNamePairs = zip(fileNames[::2], fileNames[1::2])
-for scoreFileName, easyScoreFileName in fileNamePairs:
-  wavFileName = easyScoreFileName.split('.')[0] + '.wav'
+
+
+# Get all the different music sheet
+musicSheetFiles = natsorted(filter(lambda s: '.ly' in s, os.listdir(inputFolderName + "/" + deckName)))
+
+# Create cards and embed medias
+for musicSheetFile in musicSheetFiles:
+  fileName = musicSheetFile.split('.')[0]
+
+  imgScoreFile = fileName + '.preview.svg'
+  audioFile = fileName + '.ogg'
+  infoTextFile = fileName + '.info'
   imgTag = '<img src="{0}">'
+
+  with open('./{0}/{1}/{2}'.format(tmpFolderName, deckName, infoTextFile)) as f:
+    info = f.read()
+
   my_note = genanki.Note(
     model=my_model,
     fields=[
-      imgTag.format(scoreFileName),
-      imgTag.format(easyScoreFileName),
-      '[sound:{0}]'.format(wavFileName),
+      imgTag.format(imgScoreFile),
+      info,
+      '[sound:{0}]'.format(audioFile),
     ]
   )
   my_deck.add_note(my_note)
 
   my_package.media_files.extend([
-    '{0}/{1}'.format(folderName, scoreFileName),
-    '{0}/{1}'.format(folderName, easyScoreFileName),
-    '{0}/{1}'.format(folderName, wavFileName),
+    '{0}/{1}/{2}'.format(tmpFolderName, deckName, imgScoreFile),
+    '{0}/{1}/{2}'.format(tmpFolderName, deckName, audioFile),
   ])
 
-print('{0}.apkg created.'.format(folderName))
+# Create package
+deckFileName = deckName.replace(" ", "").lower()
 
-my_package.write_to_file('{0}.apkg'.format(folderName))
+print('{0}.apkg created.'.format(deckFileName))
+
+
+my_package.write_to_file('{0}/{1}.apkg'.format(outputFolderName, deckFileName))
