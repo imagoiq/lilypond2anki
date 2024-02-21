@@ -6,9 +6,8 @@ This lets you write converts your .ly files into an Anki deck with images of she
 
 1. Create a folder under `./src` with the desired deck name
 2. Put your `.ly` files inside
-3. Add header to your file 
-
-3. Run the following command:
+1. Add header "info" to your files
+1. Run the following command:
 
 ```
 ./lilyToAnki.sh
