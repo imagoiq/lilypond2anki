@@ -13,14 +13,15 @@ my_model = genanki.Model(
   'Sheet Music',
   fields=[
     {'name': 'Score'},
-    {'name': 'Info' },
+    {'name': 'TitleHtml' },
+    {'name': 'DescriptionHtml' },
     {'name': 'Music'},
   ],
   templates=[
     {
       'name': 'Card 1',
-      'qfmt': '{{Music}}',
-      'afmt': '{{FrontSide}}<hr id="answer"><br>{{Score}}<br>{{Info}}',
+      'qfmt': '{{Music}}<p>{{TitleHtml}}</p>',
+      'afmt': '{{FrontSide}}<hr id="answer"><br>{{Score}}<br>{{DescriptionHtml}}',
     },
   ])
 
@@ -39,19 +40,24 @@ musicSheetFiles = natsorted(filter(lambda s: '.ly' in s, os.listdir(inputFolderN
 for musicSheetFile in musicSheetFiles:
   fileName = musicSheetFile.split('.')[0]
 
-  imgScoreFile = fileName + '.preview.svg'
+  imgScoreFile = fileName + '.cropped.svg'
   audioFile = fileName + '.ogg'
-  infoTextFile = fileName + '.info'
-  imgTag = '<img src="{0}">'
+  titleHtmlFile = fileName + '.titleHtml'
+  descriptionHtmlFile = fileName + '.descriptionHtml'
+  imgTag = '<img src="{0}" style="min-width:500px"/>'
 
-  with open('./{0}/{1}/{2}'.format(tmpFolderName, deckName, infoTextFile)) as f:
-    info = f.read()
+  with open('./{0}/{1}/{2}'.format(tmpFolderName, deckName, titleHtmlFile)) as f:
+    titleHtml = f.read()
+
+  with open('./{0}/{1}/{2}'.format(tmpFolderName, deckName, descriptionHtmlFile)) as f:
+    descriptionHtml = f.read()
 
   my_note = genanki.Note(
     model=my_model,
     fields=[
       imgTag.format(imgScoreFile),
-      info,
+      titleHtml,
+      descriptionHtml,
       '[sound:{0}]'.format(audioFile),
     ]
   )
@@ -63,9 +69,9 @@ for musicSheetFile in musicSheetFiles:
   ])
 
 # Create package
-deckFileName = deckName.replace(" ", "").lower()
+# TODO : we might need more sanitization for the deckname
+deckFileName = deckName.replace(" ", "_").lower()
 
 print('{0}.apkg created.'.format(deckFileName))
-
 
 my_package.write_to_file('{0}/{1}.apkg'.format(outputFolderName, deckFileName))
