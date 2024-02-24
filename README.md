@@ -1,6 +1,5 @@
-Fork of https://github.com/dunstad/lilypond
-
 This lets you write converts your .ly files into an Anki deck with images of sheet music and generated audio.
+Fork of https://github.com/dunstad/lilypond
 
 # Installation
 
