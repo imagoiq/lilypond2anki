@@ -13,12 +13,10 @@ while IFS= read -r -d '' filePath; do
     mkdir -p "$tmpFolder/$deckName"
 
     # Create outputs for every lilypond file inside given deck
-    # Note: svg backend is different and it will not output otherfile like header so this command is run twice
-    lilypond --svg -dpreview -dcrop  -o "$tmpFolder/$deckName/" "$filePath"
-    lilypond -H titleHtml -H descriptionHtml --png -dpreview  -o "$tmpFolder/$deckName/" "$filePath"
+    lilypond -H titleHtml -H descriptionHtml --png -dpreview  -dcrop -o "$tmpFolder/$deckName/" "$filePath"
 
     # Convert midi to ogg
-    timidity "$tmpFolder/$deckName/$fileName.midi" -Ov
+    timidity "$tmpFolder/$deckName/$fileName.midi" -Ow -o - | ffmpeg -i - -acodec libmp3lame -ab 128k "$tmpFolder/$deckName/$fileName.mp3"
 done
 
 # Create Anki decks

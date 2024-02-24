@@ -40,8 +40,8 @@ musicSheetFiles = natsorted(filter(lambda s: '.ly' in s, os.listdir(inputFolderN
 for musicSheetFile in musicSheetFiles:
   fileName = musicSheetFile.split('.')[0]
 
-  imgScoreFile = fileName + '.cropped.svg'
-  audioFile = fileName + '.ogg'
+  imgScoreFile = fileName + '.cropped.png'
+  audioFile = fileName + '.mp3'
   titleHtmlFile = fileName + '.titleHtml'
   descriptionHtmlFile = fileName + '.descriptionHtml'
   imgTag = '<img src="{0}" style="min-width:500px"/>'

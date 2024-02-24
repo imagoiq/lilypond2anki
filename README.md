@@ -25,4 +25,3 @@ The output when run is a .apkg file you can import into Anki.
 * It works with files and directory instead of a single file containing multiple score in a lilypond scheme list (which is make it then easier to reuse your existing files). Directories are used to name the deck.
 * There is only one output for the score (on the original version you had the easy score and the standard score)
 * The logic is done trough `include` and templating which is more flexible if you want different output for certain files.
-* Medias are optimized. SVG and OGG are used instead of PNG and WAV.
